@@ -71,6 +71,7 @@
 		C2F335F21986E7A800F5D355 /* JMCacheValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMCacheValueTransformer.m; sourceTree = "<group>"; };
 		C2F335F31986E7A800F5D355 /* NSError+JMCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+JMCache.h"; sourceTree = "<group>"; };
 		C2F335F41986E7A800F5D355 /* NSError+JMCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+JMCache.m"; sourceTree = "<group>"; };
+		C2F335FB1986F66400F5D355 /* JMCoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMCoding.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +175,7 @@
 		C2F335E81986E7A800F5D355 /* JMCache */ = {
 			isa = PBXGroup;
 			children = (
+				C2F335FB1986F66400F5D355 /* JMCoding.h */,
 				C2F335ED1986E7A800F5D355 /* JMCache.h */,
 				C2F335EE1986E7A800F5D355 /* JMCache.m */,
 				C2F335E91986E7A800F5D355 /* JMCache+filePath.h */,

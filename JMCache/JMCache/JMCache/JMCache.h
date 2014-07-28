@@ -30,6 +30,9 @@ typedef NS_ENUM(NSUInteger, JMCacheType) {
 
 + (instancetype)sharedCache;
 
+// https://github.com/nicklockwood/FastCoding
+// zip / crypt data
+
 @property (assign, nonatomic) JMCacheType cacheType;
 @property (strong, nonatomic) JMCacheValueTransformer *valueTransformer;
 @property (strong, nonatomic) dispatch_queue_t preferredCompletionQueue;
