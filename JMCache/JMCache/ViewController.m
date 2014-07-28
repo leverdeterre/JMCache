@@ -8,8 +8,10 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
+#import "JMCache.h"
+#import "JMCacheReverseDataValueTransformer.h"
 
+@interface ViewController ()
 @end
 
 @implementation ViewController
@@ -18,6 +20,10 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    [[JMCache sharedCache] setCacheType:JMCacheTypePrivate];
+    [[JMCache sharedCache] setValueTransformer:[JMCacheReverseDataValueTransformer new]];
+    [[JMCache sharedCache] setPreferredCompletionQueue:dispatch_get_main_queue()];
 }
 
 - (void)didReceiveMemoryWarning
