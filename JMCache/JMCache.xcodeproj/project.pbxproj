@@ -27,6 +27,7 @@
 		C2F335F81986E7A800F5D355 /* JMCacheReverseDataValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335F01986E7A800F5D355 /* JMCacheReverseDataValueTransformer.m */; };
 		C2F335F91986E7A800F5D355 /* JMCacheValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335F21986E7A800F5D355 /* JMCacheValueTransformer.m */; };
 		C2F335FA1986E7A800F5D355 /* NSError+JMCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335F41986E7A800F5D355 /* NSError+JMCache.m */; };
+		C2F335FE19876AC500F5D355 /* JMCache+InMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335FD19876AC500F5D355 /* JMCache+InMemory.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,8 @@
 		C2F335F31986E7A800F5D355 /* NSError+JMCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+JMCache.h"; sourceTree = "<group>"; };
 		C2F335F41986E7A800F5D355 /* NSError+JMCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+JMCache.m"; sourceTree = "<group>"; };
 		C2F335FB1986F66400F5D355 /* JMCoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMCoding.h; sourceTree = "<group>"; };
+		C2F335FC19876AC500F5D355 /* JMCache+InMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JMCache+InMemory.h"; sourceTree = "<group>"; };
+		C2F335FD19876AC500F5D355 /* JMCache+InMemory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "JMCache+InMemory.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +183,8 @@
 				C2F335EE1986E7A800F5D355 /* JMCache.m */,
 				C2F335E91986E7A800F5D355 /* JMCache+filePath.h */,
 				C2F335EA1986E7A800F5D355 /* JMCache+filePath.m */,
+				C2F335FC19876AC500F5D355 /* JMCache+InMemory.h */,
+				C2F335FD19876AC500F5D355 /* JMCache+InMemory.m */,
 				C2F335EB1986E7A800F5D355 /* JMCache+ReadWrite.h */,
 				C2F335EC1986E7A800F5D355 /* JMCache+ReadWrite.m */,
 				C2F335EF1986E7A800F5D355 /* JMCacheReverseDataValueTransformer.h */,
@@ -295,6 +300,7 @@
 				C2F335FA1986E7A800F5D355 /* NSError+JMCache.m in Sources */,
 				C2F335F61986E7A800F5D355 /* JMCache+ReadWrite.m in Sources */,
 				C2F335C41986E75300F5D355 /* AppDelegate.m in Sources */,
+				C2F335FE19876AC500F5D355 /* JMCache+InMemory.m in Sources */,
 				C2F335F81986E7A800F5D355 /* JMCacheReverseDataValueTransformer.m in Sources */,
 				C2F335C01986E75300F5D355 /* main.m in Sources */,
 				C2F335F71986E7A800F5D355 /* JMCache.m in Sources */,

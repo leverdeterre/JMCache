@@ -15,10 +15,16 @@ typedef void (^JMCacheCompletionBlockObject)(id obj);
 typedef void (^JMCacheCompletionBlockBool)(BOOL boole);
 typedef void (^JMCacheCompletionBlockBoolError)(BOOL boole, NSError *error);
 
-typedef NS_ENUM(NSUInteger, JMCacheType) {
-    JMCacheTypePublic,
-    JMCacheTypePrivate,
-    JMCacheTypeOffline
+typedef NS_ENUM(NSUInteger, JMCachePathType) {
+    JMCachePathPublic,
+    JMCachePathPrivate,
+    JMCachePathOffline
+};
+
+typedef NS_OPTIONS(NSUInteger, JMCacheType) {
+    JMCacheTypeInMemory = 1,
+    JMCacheTypeOnDisk   = 1 << 1,
+    JMCacheTypeBoth     = 1 << 2
 };
 
 @interface JMCache : NSObject
@@ -33,6 +39,7 @@ typedef NS_ENUM(NSUInteger, JMCacheType) {
 // https://github.com/nicklockwood/FastCoding
 // zip / crypt data
 
+@property (assign, nonatomic) JMCachePathType cachePathType;
 @property (assign, nonatomic) JMCacheType cacheType;
 @property (strong, nonatomic) JMCacheValueTransformer *valueTransformer;
 @property (strong, nonatomic) dispatch_queue_t preferredCompletionQueue;

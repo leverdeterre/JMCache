@@ -9,8 +9,10 @@
 #import "JMCache.h"
 #import "JMCache+filePath.h"
 #import "JMCache+ReadWrite.h"
+#import "JMCache+InMemory.h"
 
-@interface JMCache()
+@interface JMCache() <NSCacheDelegate>
+@property (strong, nonatomic) NSCache *memoryCache;
 @end
 
 @implementation JMCache
@@ -36,9 +38,19 @@
         writingQueue = dispatch_queue_create("com.jmcache.writingQueue", NULL);
         readingQueue = dispatch_queue_create("com.jmcache.readingQueue", NULL);
         propertySafeQueue = dispatch_queue_create("com.jmcache.propertySafeQueue", NULL);
-        _cacheType = JMCacheTypePrivate;
+        _cachePathType = JMCachePathPrivate;
+        _cacheType = JMCacheTypeInMemory;
+        [self cacheInMemoryInitialize];
     }
     return self;
+}
+
+- (void)cacheInMemoryInitialize
+{
+    _memoryCache = [[NSCache alloc] init];
+    _memoryCache.name = @"com.jmcache.in.memory.cache";
+    _memoryCache.countLimit = 100;
+    _memoryCache.delegate = self;
 }
 
 #pragma mark - Overided accessors
@@ -73,6 +85,20 @@
 - (void)cachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockObjectError)block
 {
     dispatch_async(propertySafeQueue, ^{
+        if(self.cacheType & JMCacheTypeInMemory){
+            id obj = [self.memoryCache objectForKey:key];
+            if (obj){
+                if (self.preferredCompletionQueue) {
+                    dispatch_async(self.preferredCompletionQueue, ^{
+                        block(obj,nil);
+                    });
+                } else {
+                    block(obj,nil);
+                }
+                return; //stop with memmoy check if found
+            }
+        }
+            
         if ([self.allKeys containsObject:key]) {
             NSString *path = [self filePathForKey:key];
             
@@ -88,6 +114,8 @@
             }
             
             [self decodeObjectForFilePath:path withCompletionBlock:^(id obj) {
+                [self.memoryCache setObject:obj forKey:key];
+                
                 if (self.preferredCompletionQueue) {
                     dispatch_async(self.preferredCompletionQueue, ^{
                         block(obj,nil);
@@ -126,6 +154,7 @@
     JMCacheCompletionBlockBool block2 = ^(BOOL res){
         if(res) {
             [self addKey:key];
+            [self.memoryCache setObject:obj forKey:key];
         }
         
         if (block) {
@@ -146,6 +175,7 @@
 - (void)removeCachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block
 {
     dispatch_async(propertySafeQueue, ^{
+
         if ([self.allKeys containsObject:key]) {
             NSString *path = [self filePathForKey:key];
             NSError *error;
@@ -153,6 +183,7 @@
             
             if (res) {
                 [self removeKey:key];
+                [self.memoryCache removeObjectForKey:key];
             }
             
             if (block) {
@@ -189,10 +220,11 @@
 {
     dispatch_async(propertySafeQueue, ^{
         [self.allKeys removeObject:key];
-        BOOL res = [self encodeObject:self.allKeys inFilePath:[self filePathForAllKeys]];
-        NSLog(@"addKey %@ %d",key,res);
+        [self.memoryCache removeObjectForKey:key];
+
+#warning Remove fileAthPAth
+        NSLog(@"removeKey %@ %d",key);
     });
 }
-
 
 @end

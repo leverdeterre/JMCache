@@ -21,7 +21,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    [[JMCache sharedCache] setCacheType:JMCacheTypePrivate];
+    [[JMCache sharedCache] setCachePathType:JMCachePathPrivate];
     [[JMCache sharedCache] setValueTransformer:[JMCacheReverseDataValueTransformer new]];
     [[JMCache sharedCache] setPreferredCompletionQueue:dispatch_get_main_queue()];
 }

@@ -28,13 +28,13 @@ NSString * const JMDiskCachedKeys = @"com.jmcache.allKeys";
 
 - (NSString *)rootDirectoryForCache
 {
-    if (self.cacheType == JMCacheTypePublic) {
+    if (self.cachePathType == JMCachePathPublic) {
         return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
         
-    } else if (self.cacheType == JMCacheTypePrivate) {
+    } else if (self.cachePathType == JMCachePathPrivate) {
         return [self privateDataPath];
         
-    } else if (self.cacheType == JMCacheTypeOffline) {
+    } else if (self.cachePathType == JMCachePathOffline) {
         return [self offlineDataPath];
     }
     
