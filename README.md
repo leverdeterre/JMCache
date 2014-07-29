@@ -1,5 +1,5 @@
 ## Cache parameters
-### Cache type -> auto path to the save directory
+### Cache path type -> auto path to the save directory
 
 ```objective-c
 typedef NS_ENUM(NSUInteger, JMCacheType) {
@@ -8,6 +8,19 @@ typedef NS_ENUM(NSUInteger, JMCacheType) {
     JMCacheTypeOffline
 };
 ```
+
+### Cache type -> memory, disk 
+
+```objective-c
+typedef NS_OPTIONS(NSUInteger, JMCacheType) {
+    JMCacheTypeInMemory = 1,
+    JMCacheTypeOnDisk   = 1 << 1,
+    JMCacheTypeBoth     = 1 << 2
+};
+```
+
+
+
 
 ### ValueTransformer
 You can write your own valueTransformer to increase security of your encoded data.
