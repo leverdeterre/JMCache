@@ -38,6 +38,7 @@ typedef NS_OPTIONS(NSUInteger, JMCacheType) {
 
 // https://github.com/nicklockwood/FastCoding
 // zip / crypt data
+//
 
 @property (assign, nonatomic) JMCachePathType cachePathType;
 @property (assign, nonatomic) JMCacheType cacheType;
@@ -55,5 +56,6 @@ typedef NS_OPTIONS(NSUInteger, JMCacheType) {
 
 //Remove cached data
 - (void)removeCachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
+- (void)clearCacheWithCompletionBlock:(JMCacheCompletionBlockBool)block;
 
 @end

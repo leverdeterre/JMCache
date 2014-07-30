@@ -175,7 +175,6 @@
 - (void)removeCachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block
 {
     dispatch_async(propertySafeQueue, ^{
-
         if ([self.allKeys containsObject:key]) {
             NSString *path = [self filePathForKey:key];
             NSError *error;
@@ -211,8 +210,7 @@
 {
     dispatch_async(propertySafeQueue, ^{
         [self.allKeys addObject:key];
-        BOOL res = [self encodeObject:self.allKeys inFilePath:[self filePathForAllKeys]];
-        NSLog(@"addKey %@ %d",key,res);
+        [self encodeObject:self.allKeys inFilePath:[self filePathForAllKeys]];
     });
 }
 
@@ -221,9 +219,33 @@
     dispatch_async(propertySafeQueue, ^{
         [self.allKeys removeObject:key];
         [self.memoryCache removeObjectForKey:key];
+        [self encodeObject:self.allKeys inFilePath:[self filePathForAllKeys]];
+    });
+}
 
-#warning Remove fileAthPAth
-        NSLog(@"removeKey %@ %d",key);
+- (void)clearCacheWithCompletionBlock:(JMCacheCompletionBlockBool)block;
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        dispatch_group_t group = dispatch_group_create();
+        
+        for(NSString *key in self.allKeys){
+            dispatch_group_enter(group);
+            [self removeCachedObjectForKey:key withCompletionBlock:^(BOOL boole, NSError *error) {
+                NSLog(@"clear Key (%@) DONE", key);
+                dispatch_group_leave(group);
+            }];
+        }
+        
+        dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+        if (block) {
+            if (self.preferredCompletionQueue) {
+                dispatch_async(self.preferredCompletionQueue, ^{
+                    block(YES);
+                });
+            } else {
+                block(YES);
+            }
+        }
     });
 }
 
