@@ -43,8 +43,7 @@ typedef NS_OPTIONS(NSUInteger, JMCacheType) {
 @property (assign, nonatomic) JMCachePathType cachePathType;
 @property (assign, nonatomic) JMCacheType cacheType;
 @property (strong, nonatomic) JMCacheValueTransformer *valueTransformer;
-@property (strong, nonatomic) dispatch_queue_t preferredCompletionQueue;
-@property (readonly, nonatomic) NSMutableArray *allKeys;
+//@property (strong, nonatomic) dispatch_queue_t preferredCompletionQueue;
 
 //Get cached data
 //- (NSObject *)cachedObjectForKey:(NSString *)key;
@@ -52,7 +51,7 @@ typedef NS_OPTIONS(NSUInteger, JMCacheType) {
 
 //Set cached data
 //- (BOOL)cacheObject:(NSObject <NSCoding>*)obj forKey:(NSString *)key;
-- (void)cacheObject:(NSObject <NSCoding>*)obj forKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBool)block;
+- (void)cacheObject:(NSObject <NSCoding>*)obj forKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
 
 //Remove cached data
 - (void)removeCachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;

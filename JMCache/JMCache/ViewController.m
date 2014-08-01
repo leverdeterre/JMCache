@@ -23,15 +23,16 @@
     
     [[JMCache sharedCache] setCachePathType:JMCachePathPrivate];
     [[JMCache sharedCache] setValueTransformer:[JMCacheReverseDataValueTransformer new]];
-    [[JMCache sharedCache] setPreferredCompletionQueue:dispatch_get_main_queue()];
+    //[[JMCache sharedCache] setPreferredCompletionQueue:dispatch_get_main_queue()];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        
         dispatch_group_t group = dispatch_group_create();
         for(int i = 0; i < 100; i ++) {
             NSString *obj = [NSString stringWithFormat:@"%dobj",i];
             
             dispatch_group_enter(group);
-            [[JMCache sharedCache] cacheObject:obj forKey:obj withCompletionBlock:^(BOOL boole) {
+            [[JMCache sharedCache] cacheObject:obj forKey:obj withCompletionBlock:^(BOOL boole,NSError *error) {
                 dispatch_group_leave(group);
                 NSLog(@"%@ addCache done",obj);
             }];
@@ -39,9 +40,12 @@
         
         dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
         NSLog(@"add all obj Cache done");
+    
+        /*
         [[JMCache sharedCache] clearCacheWithCompletionBlock:^(BOOL boole) {
-            NSLog(@"DONE");
+            NSLog(@"clearCacheWithCompletionBlock DONE");
         }];
+         */
     });
 }
 

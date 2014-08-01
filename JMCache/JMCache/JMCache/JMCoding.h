@@ -10,7 +10,7 @@
 
 @protocol JMCoding <NSObject>
 
-+ (id)objectFromData:(NSData *)data;
-- (NSData *)dataFromObject:(id)object;
++ (id)objectWithData:(NSData *)data;
++ (NSData *)dataWithRootObject:(id)object;
 
 @end

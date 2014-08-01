@@ -50,8 +50,9 @@
 
 - (void)encodeObject:(id)object inFilePath:(NSString *)filePath withCompletionBlock:(JMCacheCompletionBlockBool)block
 {
+    __block NSData *content = [NSKeyedArchiver archivedDataWithRootObject:object];
+
     dispatch_async(writingQueue, ^{
-        NSData *content = [NSKeyedArchiver archivedDataWithRootObject:object];
         if (self.valueTransformer) {
             content = [self.valueTransformer transformedValue:content];
         }

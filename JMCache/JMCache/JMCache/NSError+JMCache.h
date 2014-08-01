@@ -10,7 +10,8 @@
 
 typedef NS_ENUM(NSUInteger, JMCacheErrorType) {
     JMCacheErrorTypeKeyMissing,
-    JMCacheErrorTypeFileMissing
+    JMCacheErrorTypeFileMissing,
+    JMCacheErrorTypeEncodeDecodeProtocolMissing
 };
 
 @interface NSError (JMCache)
