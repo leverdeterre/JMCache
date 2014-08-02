@@ -14,6 +14,8 @@
 #import "JMCache+InMemory.h"
 #import "NSObject+JMCache.h"
 
+#define JM_BLOCK_SAFE_RUN(block, ...) block ? block(__VA_ARGS__) : nil
+
 @interface JMCache() <NSCacheDelegate>
 @property (strong, nonatomic) NSCache *memoryCache;
 @property (strong, nonatomic) NSMutableArray *allKeys;
@@ -42,7 +44,6 @@
         propertySafeQueue = dispatch_queue_create("com.jmcache.propertySafeQueue", NULL);
         _cachePathType = JMCachePathPrivate;
         _cacheType = JMCacheTypeInMemory;
-        //[self loadKeys];
         [self cacheInMemoryInitialize];
     }
     return self;
@@ -56,27 +57,7 @@
     _memoryCache.delegate = self;
 }
 
-#pragma mark - Get Cached data
-
-/*
-- (NSObject *)cachedObjectForKey:(NSString *)key
-{
-    if ([self.allKeys containsObject:key]) {
-        NSString *path = [self filePathForKey:key];
-        return [self decodeObjectForFilePath:path];
-    }
-    return nil;
-}
- */
-
-- (void)loadKeys
-{
-    NSString *path = [self filePathForAllKeys];
-    _allKeys = [[self decodeObjectForFilePath:path] mutableCopy];
-    if (nil == _allKeys) {
-        _allKeys = [NSMutableArray new];
-    }
-}
+#pragma mark - Async Get Cached data
 
 - (void)cachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockObjectError)block
 {
@@ -84,67 +65,87 @@
         if(self.cacheType & JMCacheTypeInMemory){
             id obj = [self.memoryCache objectForKey:key];
             if (obj){
-                block(obj,nil);
-
+                JM_BLOCK_SAFE_RUN(block,obj,nil);
                 return; //stop with memmoy check if found
             }
         }
-        
         
         JMCacheKey *cacheKey = [self cacheKeyForKey:key];
         if (cacheKey) {
             NSString *path = [self filePathForKey:key];
             
             if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-                block(nil,[NSError jmCacheErrorWithType:JMCacheErrorTypeFileMissing]);
+                if (self.preferredCompletionQueue) {
+                    dispatch_async(self.preferredCompletionQueue, ^{
+                        JM_BLOCK_SAFE_RUN(block,nil,[NSError jmCacheErrorWithType:JMCacheErrorTypeFileMissing]);
+                    });
+                } else {
+                    JM_BLOCK_SAFE_RUN(block,nil,[NSError jmCacheErrorWithType:JMCacheErrorTypeFileMissing]);
+                }
                 return ;
             }
             
             [self decodeObjectForFilePath:path withCompletionBlock:^(id obj) {
                 [self.memoryCache setObject:obj forKey:key];
-                block(obj,nil);
+                if (self.preferredCompletionQueue) {
+                    dispatch_async(self.preferredCompletionQueue, ^{
+                        JM_BLOCK_SAFE_RUN(block,obj,nil);
+                    });
+                } else {
+                    JM_BLOCK_SAFE_RUN(block,obj,nil);
+                }
             }];
         } else {
-            block(nil,[NSError jmCacheErrorWithType:JMCacheErrorTypeKeyMissing]);
+            if (self.preferredCompletionQueue) {
+                dispatch_async(self.preferredCompletionQueue, ^{
+                    JM_BLOCK_SAFE_RUN(block,nil,[NSError jmCacheErrorWithType:JMCacheErrorTypeKeyMissing]);
+                });
+            } else {
+                JM_BLOCK_SAFE_RUN(block,nil,[NSError jmCacheErrorWithType:JMCacheErrorTypeKeyMissing]);
+            }
         }
     });
 }
 
-/*
-- (BOOL)cacheObject:(NSObject <NSCoding>*)obj forKey:(NSString *)key
-{
-    NSString *path = [self filePathForKey:key];
-    BOOL res = [self encodeObject:obj inFilePath:path];
-    if (res) {
-        [self addKey:key];
-    }
-    return res;
-}
- */
-
 - (void)cacheObject:(NSObject *)obj forKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block
 {
-    //Test if encode/decode is possible
-    if ([obj.class canBeCoded]==NO || [obj.class canBeDecoded]==NO) {
-        block(NO,[NSError jmCacheErrorWithType:JMCacheErrorTypeKeyMissing]);
-        return;
-    }
-
-    NSString *path = [self filePathForKey:key];
-    JMCacheCompletionBlockBool block2 = ^(BOOL res){
-        if(res) {
-            JMCacheKey *cacheKey = [JMCacheKey cacheKeyWithKey:key andClass:obj.class];
-            __weak JMCache *weakSelf = self;
-            [self addCacheKey:cacheKey withCompletionBlock:^(BOOL boole) {
-                [weakSelf.memoryCache setObject:obj forKey:key];
-                if (block) {
-                    block(res, nil);
-                }
-            }];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        
+        //Test if encode/decode is possible
+        if ([obj.class canBeCoded]==NO || [obj.class canBeDecoded]==NO) {
+            if (self.preferredCompletionQueue) {
+                dispatch_async(self.preferredCompletionQueue, ^{
+                    JM_BLOCK_SAFE_RUN(block,NO, [NSError jmCacheErrorWithType:JMCacheErrorTypeKeyMissing]);
+                });
+            } else {
+                JM_BLOCK_SAFE_RUN(block,NO, [NSError jmCacheErrorWithType:JMCacheErrorTypeKeyMissing]);
+            }
+            
+            return;
         }
-    };
-    
-    [self encodeObject:obj inFilePath:path withCompletionBlock:block2];
+        
+        NSString *path = [self filePathForKey:key];
+        JMCacheCompletionBlockBool block2 = ^(BOOL res){
+            if(res) {
+                JMCacheKey *cacheKey = [JMCacheKey cacheKeyWithKey:key andClass:obj.class];
+                __weak JMCache *weakSelf = self;
+                [self addCacheKey:cacheKey withCompletionBlock:^(BOOL boole) {
+                    __strong JMCache *strongSelf = weakSelf;
+                    [strongSelf.memoryCache setObject:obj forKey:key];
+                    
+                    if (strongSelf.preferredCompletionQueue) {
+                        dispatch_async(strongSelf.preferredCompletionQueue, ^{
+                            JM_BLOCK_SAFE_RUN(block,res, nil);
+                        });
+                    } else {
+                        JM_BLOCK_SAFE_RUN(block,res, nil);
+                    }
+                }];
+            }
+        };
+        
+        [self encodeObject:obj inFilePath:path withCompletionBlock:block2];
+    });
 }
 
 //Remove cached data
@@ -160,17 +161,78 @@
             if (res) {
                 __weak JMCache *weakSelf = self;
                 [self removeCacheKey:cacheKey withCompletionBlock:^(BOOL boole) {
-                    [weakSelf.memoryCache removeObjectForKey:cacheKey.key];
-                    if (block) {
-                        block(res, error);
-                    }
+                    __strong JMCache *strongSelf = weakSelf;
+                    [strongSelf.memoryCache removeObjectForKey:cacheKey.key];
+                    JM_BLOCK_SAFE_RUN(block,res, error);
                 }];
             }
         } else {
-            block(NO,[NSError jmCacheErrorWithType:JMCacheErrorTypeKeyMissing]);
+            JM_BLOCK_SAFE_RUN(block,NO, [NSError jmCacheErrorWithType:JMCacheErrorTypeKeyMissing]);
         }
     });
 }
+
+- (void)clearCacheWithCompletionBlock:(JMCacheCompletionBlockBool)block;
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        dispatch_group_t group = dispatch_group_create();
+        
+        for(NSString *key in [self.allKeys valueForKey:@"key"]){
+            dispatch_group_enter(group);
+            [self removeCachedObjectForKey:key withCompletionBlock:^(BOOL boole, NSError *error) {
+                dispatch_group_leave(group);
+            }];
+        }
+        
+        dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+        if (self.preferredCompletionQueue) {
+            dispatch_async(self.preferredCompletionQueue, ^{
+                JM_BLOCK_SAFE_RUN(block,YES);
+            });
+        } else {
+            JM_BLOCK_SAFE_RUN(block,YES);
+        }
+    });
+}
+
+#pragma mark - Sync Get Cached data
+
+- (id)cachedObjectForKey:(NSString *)key
+{
+    if (!key)
+        return nil;
+    
+    __block id objectForKey = nil;
+    
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    [self cachedObjectForKey:key withCompletionBlock:^(id obj, NSError *error) {
+        objectForKey = obj;
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    return objectForKey;
+}
+
+- (BOOL)cacheObject:(NSObject *)obj forKey:(NSString *)key
+{
+    if (!key)
+        return NO;
+    
+    __block BOOL result = NO;
+
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    [self cacheObject:obj forKey:key withCompletionBlock:^(BOOL boole, NSError *error) {
+        result = boole;
+        dispatch_semaphore_signal(semaphore);
+    }];
+ 
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    return result;
+}
+
+#pragma mark - Private methods
 
 - (void)addCacheKey:(JMCacheKey *)cacheKey withCompletionBlock:(JMCacheCompletionBlockBool)block
 {
@@ -189,25 +251,6 @@
     });
 }
 
-- (void)clearCacheWithCompletionBlock:(JMCacheCompletionBlockBool)block;
-{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        dispatch_group_t group = dispatch_group_create();
-        
-        for(NSString *key in [self.allKeys valueForKey:@"key"]){
-            dispatch_group_enter(group);
-            [self removeCachedObjectForKey:key withCompletionBlock:^(BOOL boole, NSError *error) {
-                dispatch_group_leave(group);
-            }];
-        }
-        
-        dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-        if (block) {
-            block(YES);
-        }
-    });
-}
-
 - (JMCacheKey *)cacheKeyForKey:(NSString *)key
 {
     if (self.allKeys == nil) {
@@ -221,5 +264,15 @@
     
     return nil;
 }
+
+- (void)loadKeys
+{
+    NSString *path = [self filePathForAllKeys];
+    _allKeys = [[self decodeObjectForFilePath:path] mutableCopy];
+    if (nil == _allKeys) {
+        _allKeys = [NSMutableArray new];
+    }
+}
+
 
 @end

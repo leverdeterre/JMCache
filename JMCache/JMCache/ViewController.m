@@ -21,10 +21,12 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
+    
     [[JMCache sharedCache] setCachePathType:JMCachePathPrivate];
     [[JMCache sharedCache] setValueTransformer:[JMCacheReverseDataValueTransformer new]];
     //[[JMCache sharedCache] setPreferredCompletionQueue:dispatch_get_main_queue()];
     
+    /*
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         
         dispatch_group_t group = dispatch_group_create();
@@ -40,13 +42,16 @@
         
         dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
         NSLog(@"add all obj Cache done");
+
+    //});
+*/
     
-        /*
-        [[JMCache sharedCache] clearCacheWithCompletionBlock:^(BOOL boole) {
-            NSLog(@"clearCacheWithCompletionBlock DONE");
-        }];
-         */
-    });
+    /*
+     [[JMCache sharedCache] clearCacheWithCompletionBlock:^(BOOL boole) {
+     NSLog(@"clearCacheWithCompletionBlock DONE");
+     }];
+     */
+    
 }
 
 @end

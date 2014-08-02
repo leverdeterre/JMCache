@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C2A5DC24198CC52F00DC7662 /* JMCacheQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A5DC23198CC52F00DC7662 /* JMCacheQueueTests.m */; };
+		C2A5DC25198CC55B00DC7662 /* JMCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335EE1986E7A800F5D355 /* JMCache.m */; };
+		C2A5DC26198CC56000DC7662 /* JMCacheKey.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F33606198AE16F00F5D355 /* JMCacheKey.m */; };
+		C2A5DC27198CC56600DC7662 /* JMCache+filePath.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335EA1986E7A800F5D355 /* JMCache+filePath.m */; };
+		C2A5DC28198CC56600DC7662 /* JMCache+InMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335FD19876AC500F5D355 /* JMCache+InMemory.m */; };
+		C2A5DC29198CC56600DC7662 /* JMCache+ReadWrite.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335EC1986E7A800F5D355 /* JMCache+ReadWrite.m */; };
+		C2A5DC2A198CC56600DC7662 /* JMCacheReverseDataValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335F01986E7A800F5D355 /* JMCacheReverseDataValueTransformer.m */; };
+		C2A5DC2B198CC56600DC7662 /* JMCacheValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335F21986E7A800F5D355 /* JMCacheValueTransformer.m */; };
+		C2A5DC2C198CC56600DC7662 /* NSError+JMCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F335F41986E7A800F5D355 /* NSError+JMCache.m */; };
+		C2A5DC2D198CC56600DC7662 /* NSObject+JMCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C2F336001988C3DC00F5D355 /* NSObject+JMCache.m */; };
 		C2F335B41986E75300F5D355 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2F335B31986E75300F5D355 /* Foundation.framework */; };
 		C2F335B61986E75300F5D355 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2F335B51986E75300F5D355 /* CoreGraphics.framework */; };
 		C2F335B81986E75300F5D355 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2F335B71986E75300F5D355 /* UIKit.framework */; };
@@ -43,6 +53,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C2A5DC23198CC52F00DC7662 /* JMCacheQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMCacheQueueTests.m; sourceTree = "<group>"; };
 		C2F335B01986E75300F5D355 /* JMCache.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JMCache.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2F335B31986E75300F5D355 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C2F335B51986E75300F5D355 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -167,6 +178,7 @@
 			isa = PBXGroup;
 			children = (
 				C2F335DE1986E75400F5D355 /* JMCacheTests.m */,
+				C2A5DC23198CC52F00DC7662 /* JMCacheQueueTests.m */,
 				C2F335D91986E75400F5D355 /* Supporting Files */,
 			);
 			path = JMCacheTests;
@@ -324,7 +336,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2A5DC2A198CC56600DC7662 /* JMCacheReverseDataValueTransformer.m in Sources */,
 				C2F335DF1986E75400F5D355 /* JMCacheTests.m in Sources */,
+				C2A5DC24198CC52F00DC7662 /* JMCacheQueueTests.m in Sources */,
+				C2A5DC2D198CC56600DC7662 /* NSObject+JMCache.m in Sources */,
+				C2A5DC27198CC56600DC7662 /* JMCache+filePath.m in Sources */,
+				C2A5DC25198CC55B00DC7662 /* JMCache.m in Sources */,
+				C2A5DC2B198CC56600DC7662 /* JMCacheValueTransformer.m in Sources */,
+				C2A5DC26198CC56000DC7662 /* JMCacheKey.m in Sources */,
+				C2A5DC29198CC56600DC7662 /* JMCache+ReadWrite.m in Sources */,
+				C2A5DC28198CC56600DC7662 /* JMCache+InMemory.m in Sources */,
+				C2A5DC2C198CC56600DC7662 /* NSError+JMCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -521,6 +543,7 @@
 				C2F335E41986E75400F5D355 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C2F335E51986E75400F5D355 /* Build configuration list for PBXNativeTarget "JMCacheTests" */ = {
 			isa = XCConfigurationList;
@@ -529,6 +552,7 @@
 				C2F335E71986E75400F5D355 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
