@@ -38,6 +38,7 @@
     }
     
     NSLog(@"add all obj Cache done");
+    NSLog(@"%@",[JMCache sharedCache]);
 }
 
 @end

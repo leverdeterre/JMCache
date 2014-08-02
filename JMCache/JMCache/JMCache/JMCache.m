@@ -45,6 +45,7 @@
         _cachePathType = JMCachePathPrivate;
         _cacheType = JMCacheTypeInMemory;
         [self cacheInMemoryInitialize];
+        [self cacheAllKeysInitialize];
     }
     return self;
 }
@@ -55,6 +56,16 @@
     _memoryCache.name = @"com.jmcache.in.memory.cache";
     _memoryCache.countLimit = 100;
     _memoryCache.delegate = self;
+}
+
+- (void)cacheAllKeysInitialize
+{
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+ 
+    [self loadKeysWithCompletionBlock:^(BOOL resul) {
+        dispatch_semaphore_signal(semaphore);
+    }];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 }
 
 #pragma mark - Async Get Cached data
@@ -129,7 +140,7 @@
             if(res) {
                 JMCacheKey *cacheKey = [JMCacheKey cacheKeyWithKey:key andClass:obj.class];
                 __weak JMCache *weakSelf = self;
-                [self addCacheKey:cacheKey withCompletionBlock:^(BOOL boole) {
+                [self addCacheKey:cacheKey withCompletionBlock:^(BOOL resul) {
                     __strong JMCache *strongSelf = weakSelf;
                     [strongSelf.memoryCache setObject:obj forKey:key];
                     
@@ -160,7 +171,7 @@
             
             if (res) {
                 __weak JMCache *weakSelf = self;
-                [self removeCacheKey:cacheKey withCompletionBlock:^(BOOL boole) {
+                [self removeCacheKey:cacheKey withCompletionBlock:^(BOOL resul) {
                     __strong JMCache *strongSelf = weakSelf;
                     [strongSelf.memoryCache removeObjectForKey:cacheKey.key];
                     JM_BLOCK_SAFE_RUN(block,res, error);
@@ -179,7 +190,7 @@
         
         for(NSString *key in [self.allKeys valueForKey:@"key"]){
             dispatch_group_enter(group);
-            [self removeCachedObjectForKey:key withCompletionBlock:^(BOOL boole, NSError *error) {
+            [self removeCachedObjectForKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
                 dispatch_group_leave(group);
             }];
         }
@@ -220,16 +231,16 @@
     if (!key)
         return NO;
     
-    __block BOOL result = NO;
+    __block BOOL bresult = NO;
 
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    [self cacheObject:obj forKey:key withCompletionBlock:^(BOOL boole, NSError *error) {
-        result = boole;
+    [self cacheObject:obj forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
+        bresult = resul;
         dispatch_semaphore_signal(semaphore);
     }];
  
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    return result;
+    return bresult;
 }
 
 #pragma mark - Private methods
@@ -272,6 +283,41 @@
     if (nil == _allKeys) {
         _allKeys = [NSMutableArray new];
     }
+}
+
+- (void)loadKeysWithCompletionBlock:(JMCacheCompletionBlockBool)block
+{
+    dispatch_async(propertySafeQueue, ^{
+        [self loadKeys];
+        block(YES);
+    });
+}
+
+- (void)allKeysWithCompletionBlock:(JMCacheCompletionBlockObject)block
+{
+    dispatch_async(propertySafeQueue, ^{
+        block([self.allKeys copy]);
+    });
+}
+
+- (NSString *)description
+{
+    NSMutableString *desc = [NSMutableString new];
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+
+    __block NSArray *allCacheKeys;
+    [self allKeysWithCompletionBlock:^(id obj) {
+        allCacheKeys = obj;
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    
+    for (JMCacheKey *cacheKey in allCacheKeys) {
+        [desc appendFormat:@"%@ (class : %@)\n", cacheKey.key,NSStringFromClass(cacheKey.objClass)];
+    }
+    
+    return desc;
 }
 
 

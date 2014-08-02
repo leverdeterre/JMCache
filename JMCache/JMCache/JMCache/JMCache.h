@@ -12,8 +12,8 @@
 
 typedef void (^JMCacheCompletionBlockObjectError)(id obj, NSError *error);
 typedef void (^JMCacheCompletionBlockObject)(id obj);
-typedef void (^JMCacheCompletionBlockBool)(BOOL boole);
-typedef void (^JMCacheCompletionBlockBoolError)(BOOL boole, NSError *error);
+typedef void (^JMCacheCompletionBlockBool)(BOOL resul);
+typedef void (^JMCacheCompletionBlockBoolError)(BOOL resul, NSError *error);
 
 typedef NS_ENUM(NSUInteger, JMCachePathType) {
     JMCachePathPublic,
