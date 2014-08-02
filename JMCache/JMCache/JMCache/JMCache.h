@@ -54,5 +54,6 @@ typedef NS_OPTIONS(NSUInteger, JMCacheType) {
 // Sync API
 - (id)cachedObjectForKey:(NSString *)key;
 - (BOOL)cacheObject:(NSObject *)obj forKey:(NSString *)key;
+- (NSInteger)numberOfObjectInJMCache;
 
 @end

@@ -50,6 +50,12 @@
     return self;
 }
 
+-(void)setValueTransformer:(JMCacheValueTransformer *)valueTransformer
+{
+    _valueTransformer = valueTransformer;
+    [self cacheAllKeysInitialize];
+}
+
 - (void)cacheInMemoryInitialize
 {
     _memoryCache = [[NSCache alloc] init];
@@ -243,6 +249,19 @@
     return bresult;
 }
 
+- (NSInteger)numberOfObjectInJMCache
+{
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    __block NSInteger nb = 0;
+    [self allKeysWithCompletionBlock:^(id obj) {
+        nb = [obj count];
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    return nb;
+}
+
 #pragma mark - Private methods
 
 - (void)addCacheKey:(JMCacheKey *)cacheKey withCompletionBlock:(JMCacheCompletionBlockBool)block
@@ -278,11 +297,20 @@
 
 - (void)loadKeys
 {
-    NSString *path = [self filePathForAllKeys];
-    _allKeys = [[self decodeObjectForFilePath:path] mutableCopy];
-    if (nil == _allKeys) {
-        _allKeys = [NSMutableArray new];
+    @try {
+        NSString *path = [self filePathForAllKeys];
+        _allKeys = [[self decodeObjectForFilePath:path] mutableCopy];
+        if (nil == _allKeys) {
+            _allKeys = [NSMutableArray new];
+        }
     }
+    @catch (NSException *exception) {
+        //Probably decode impossible because of valueTransformer
+    }
+    @finally {
+        
+    }
+
 }
 
 - (void)loadKeysWithCompletionBlock:(JMCacheCompletionBlockBool)block
