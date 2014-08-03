@@ -6,7 +6,7 @@ It is composed of a cache disk and a memory cache (JMCacheMemory).
 JMCache is cool because :
 * it can store object not compliant with NSCoding protocols, you can implement JMcoding protocol or use [FastCoding implementation](https://github.com/nicklockwood/FastCoding),
 * you can configure the cache to be "memory then disk", "only memory", "only disk",
-* you can use a ValueTransformer to increase security of your encoded object.
+* you can use a ValueTransformer to increase security of your encoded object, you can zip it, crypt it with your own algorithms.
 
 
 ## Cache parameters
