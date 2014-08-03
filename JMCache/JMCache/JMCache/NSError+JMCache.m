@@ -10,12 +10,20 @@
 
 NSString * NSStringFromCacheErrorType(JMCacheErrorType type) {
     switch (type) {
-        case JMCacheErrorTypeKeyMissing:
-            return @"JMCacheErrorTypeKeyMissing";
+        case JMCacheErrorTypeKeyNotFoundInCache:
+            return @"JMCacheErrorTypeKeyNotFoundInCache";
             break;
           
         case JMCacheErrorTypeFileMissing:
             return @"JMCacheErrorTypeFileMissing";
+            break;
+            
+        case JMCacheErrorTypeEncodeDecodeProtocolMissing:
+            return @"JMCacheErrorTypeEncodeDecodeProtocolMissing";
+            break;
+            
+        case JMCacheErrorTypeNoObjectFoundOnMemoryAndDiskDisable:
+            return @"JMCacheErrorTypeNoObjectFoundOnMemoryAndDiskDisable";
             break;
             
         default:

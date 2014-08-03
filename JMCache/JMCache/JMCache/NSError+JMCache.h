@@ -9,9 +9,10 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSUInteger, JMCacheErrorType) {
-    JMCacheErrorTypeKeyMissing,
+    JMCacheErrorTypeKeyNotFoundInCache,
     JMCacheErrorTypeFileMissing,
-    JMCacheErrorTypeEncodeDecodeProtocolMissing
+    JMCacheErrorTypeEncodeDecodeProtocolMissing,
+    JMCacheErrorTypeNoObjectFoundOnMemoryAndDiskDisable
 };
 
 @interface NSError (JMCache)

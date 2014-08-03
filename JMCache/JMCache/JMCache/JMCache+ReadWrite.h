@@ -11,9 +11,12 @@
 @interface JMCache (ReadWrite)
 
 - (id)decodeObjectForFilePath:(NSString *)filePath;
+- (id)decodeObjectForFilePath:(NSString *)filePath useTransformer:(BOOL)useTransformer;
 - (void)decodeObjectForFilePath:(NSString *)filePath withCompletionBlock:(JMCacheCompletionBlockObject)block;
+- (void)decodeObjectForFilePath:(NSString *)filePath useTransformer:(BOOL)useTransformer withCompletionBlock:(JMCacheCompletionBlockObject)block;
 
 - (BOOL)encodeObject:(id)object inFilePath:(NSString *)filePath;
 - (void)encodeObject:(id)object inFilePath:(NSString *)filePath withCompletionBlock:(JMCacheCompletionBlockBool)block;
+- (void)encodeObject:(id)object inFilePath:(NSString *)filePath useTransformer:(BOOL)useTransformer withCompletionBlock:(JMCacheCompletionBlockBool)block;
 
 @end

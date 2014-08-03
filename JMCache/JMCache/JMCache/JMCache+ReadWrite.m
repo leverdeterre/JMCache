@@ -10,11 +10,11 @@
 
 @implementation JMCache (ReadWrite)
 
-- (id)decodeObjectForFilePath:(NSString *)filePath
+- (id)decodeObjectForFilePath:(NSString *)filePath useTransformer:(BOOL)useTransformer
 {
     if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
         NSData *content = [[NSFileManager defaultManager] contentsAtPath:filePath];
-        if (self.valueTransformer) {
+        if (self.valueTransformer && useTransformer) {
             content = [self.valueTransformer reverseTransformedValue:content];
         }
         
@@ -24,7 +24,12 @@
     return nil;
 }
 
-- (void)decodeObjectForFilePath:(NSString *)filePath withCompletionBlock:(JMCacheCompletionBlockObject)block
+- (id)decodeObjectForFilePath:(NSString *)filePath
+{
+    return [self decodeObjectForFilePath:filePath useTransformer:YES];
+}
+
+- (void)decodeObjectForFilePath:(NSString *)filePath useTransformer:(BOOL)useTransformer withCompletionBlock:(JMCacheCompletionBlockObject)block
 {
     dispatch_async(readingQueue, ^{
         if (block) {
@@ -38,6 +43,11 @@
     });
 }
 
+- (void)decodeObjectForFilePath:(NSString *)filePath withCompletionBlock:(JMCacheCompletionBlockObject)block
+{
+    [self decodeObjectForFilePath:filePath useTransformer:YES withCompletionBlock:block];
+}
+
 - (BOOL)encodeObject:(id)object inFilePath:(NSString *)filePath
 {
     NSData *content = [NSKeyedArchiver archivedDataWithRootObject:object];
@@ -48,12 +58,13 @@
     return [content writeToFile:filePath atomically:YES];
 }
 
-- (void)encodeObject:(id)object inFilePath:(NSString *)filePath withCompletionBlock:(JMCacheCompletionBlockBool)block
+- (void)encodeObject:(id)object inFilePath:(NSString *)filePath useTransformer:(BOOL)useTransformer withCompletionBlock:(JMCacheCompletionBlockBool)block
 {
     __block NSData *content = [NSKeyedArchiver archivedDataWithRootObject:object];
 
     dispatch_async(writingQueue, ^{
-        if (self.valueTransformer) {
+
+        if (self.valueTransformer && useTransformer==YES) {
             content = [self.valueTransformer transformedValue:content];
         }
         
@@ -63,6 +74,11 @@
             [content writeToFile:filePath atomically:YES];
         }
     });
+}
+
+- (void)encodeObject:(id)object inFilePath:(NSString *)filePath withCompletionBlock:(JMCacheCompletionBlockBool)block
+{
+    [self encodeObject:object inFilePath:filePath useTransformer:YES withCompletionBlock:block];
 }
 
 @end

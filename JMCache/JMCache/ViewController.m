@@ -36,6 +36,7 @@ long getMillis()
     
     [[JMCache sharedCache] setCachePathType:JMCachePathPrivate];
     [[JMCache sharedCache] setValueTransformer:[JMCacheReverseDataValueTransformer new]];
+    [[JMCache sharedCache] setCacheType:JMCacheTypeInMemory];
     //[[JMCache sharedCache] setPreferredCompletionQueue:dispatch_get_main_queue()];
         
 }
@@ -58,7 +59,7 @@ long getMillis()
 
     switch (indexPath.row) {
         case 0:{
-            cell.titleLabel.text = [NSString stringWithFormat:@"%d elements in cache", [[JMCache sharedCache] numberOfObjectInJMCache]];
+            cell.titleLabel.text = [NSString stringWithFormat:@"%ld elements in cache", (long)[[JMCache sharedCache] numberOfObjectInJMCache]];
             [cell.actionButton addTarget:self action:@selector(addOneElementInCache) forControlEvents:UIControlEventTouchUpInside];
             [cell.actionButton setTitle:@"add one" forState:UIControlStateNormal];
             break;

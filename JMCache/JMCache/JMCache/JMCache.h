@@ -15,6 +15,10 @@ typedef void (^JMCacheCompletionBlockObject)(id obj);
 typedef void (^JMCacheCompletionBlockBool)(BOOL resul);
 typedef void (^JMCacheCompletionBlockBoolError)(BOOL resul, NSError *error);
 
+void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_block_t block);
+
+#define JM_BLOCK_SAFE_RUN(block, ...) block ? block(__VA_ARGS__) : nil
+
 typedef NS_ENUM(NSUInteger, JMCachePathType) {
     JMCachePathPublic,
     JMCachePathPrivate,
