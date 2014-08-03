@@ -1,3 +1,8 @@
+
+# JMCache 
+JMCache is a key/value store designed for persisting temporary objects fully based on GCD.
+It is composed of a cache disk and a memory cache (JMCacheMemory).
+
 ## Cache parameters
 ### Cache path type -> auto path to the save directory
 
@@ -18,9 +23,6 @@ typedef NS_OPTIONS(NSUInteger, JMCacheType) {
     JMCacheTypeBoth     = 1 << 2
 };
 ```
-
-
-
 
 ### ValueTransformer
 You can write your own valueTransformer to increase security of your encoded data.
