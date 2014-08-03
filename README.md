@@ -37,9 +37,22 @@ For example, see minimalist implemtation of JMCacheReverseDataValueTransformer c
 @property (strong, nonatomic) JMCacheValueTransformer *valueTransformer;
 ```
 
-### preferredCompletionQueue
-Default completion queue can be configure here.
+### Examples
+Add object
 ```objective-c
-@property (strong, nonatomic) dispatch_queue_t preferredCompletionQueue
+NSString *key = [NSString stringWithFormat:@"%f", [date timeIntervalSinceNow]];
+[[JMCache sharedCache] cacheObject:date forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
+    NSLog(@"Job is done");
+}];
 ```
+
+remove object
+```objective-c
+[[JMCache sharedCache] removeCachedObjectForKey:@"Steve" withCompletionBlock:^(BOOL resul, NSError *error) {
+    NSLog(@"Job is done");
+}];
+```
+
+
+
 
