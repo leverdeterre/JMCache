@@ -36,7 +36,7 @@ long getMillis()
     
     [[JMCache sharedCache] setCachePathType:JMCachePathPrivate];
     [[JMCache sharedCache] setValueTransformer:[JMCacheReverseDataValueTransformer new]];
-    [[JMCache sharedCache] setCacheType:JMCacheTypeInMemory];
+    [[JMCache sharedCache] setCacheType:JMCacheTypeInMemoryThenOnDisk];
     //[[JMCache sharedCache] setPreferredCompletionQueue:dispatch_get_main_queue()];
         
 }

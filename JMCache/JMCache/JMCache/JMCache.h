@@ -26,9 +26,9 @@ typedef NS_ENUM(NSUInteger, JMCachePathType) {
 };
 
 typedef NS_OPTIONS(NSUInteger, JMCacheType) {
-    JMCacheTypeInMemory = 1,
-    JMCacheTypeOnDisk   = 1 << 1,
-    JMCacheTypeBoth     = 1 << 2
+    JMCacheTypeInMemory             = 1,
+    JMCacheTypeOnDisk               = 1 << 1,
+    JMCacheTypeInMemoryThenOnDisk   = (JMCacheTypeInMemory | JMCacheTypeOnDisk)
 };
 
 @interface JMCache : NSObject

@@ -51,7 +51,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
         readingQueue = dispatch_queue_create("com.jmcache.readingQueue", NULL);
         propertySafeQueue = dispatch_queue_create("com.jmcache.propertySafeQueue", NULL);
         _cachePathType = JMCachePathPrivate;
-        _cacheType = JMCacheTypeBoth;
+        _cacheType = JMCacheTypeInMemoryThenOnDisk;
         [self cacheAllKeysInitialize];
     }
     return self;
@@ -141,7 +141,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
             }
         };
         
-        if (self.cachePathType & JMCacheTypeOnDisk) {
+        if (self.cacheType & JMCacheTypeOnDisk) {
             [self encodeObject:obj inFilePath:path withCompletionBlock:block2];
         } else {
             block2(YES);
