@@ -59,7 +59,7 @@ long getMillis()
 
     switch (indexPath.row) {
         case 0:{
-            cell.titleLabel.text = [NSString stringWithFormat:@"%ld elements in cache", (long)[[JMCache sharedCache] numberOfObjectInJMCache]];
+            cell.titleLabel.text = [NSString stringWithFormat:@"%ld elements in cache", (long)[[JMCache sharedCache] numberOfCachedObjects]];
             [cell.actionButton addTarget:self action:@selector(addOneElementInCache) forControlEvents:UIControlEventTouchUpInside];
             [cell.actionButton setTitle:@"add one" forState:UIControlStateNormal];
             break;
@@ -92,7 +92,7 @@ long getMillis()
     long timeStart = getMillis();
     NSString *key = [NSString stringWithFormat:@"%f", [date timeIntervalSinceNow]];
     
-    [[JMCache sharedCache] cacheObject:date forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
+    [[JMCache sharedCache] setObject:date forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
        dispatch_async(dispatch_get_main_queue(), ^{
            long timeEnd = getMillis();
            [UIAlertView showAlertMessage:[NSString stringWithFormat:@"Fait en %ld ms",timeEnd-timeStart]];
@@ -111,7 +111,7 @@ long getMillis()
         for (int i = 0; i < 100 ; i++) {
             NSString *key = [NSString stringWithFormat:@"%f_%d", [date timeIntervalSinceNow],i];
             
-            [[JMCache sharedCache] cacheObject:date forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
+            [[JMCache sharedCache] setObject:date forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
                 dispatch_semaphore_signal(semaphore);
             }];
             dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);

@@ -83,7 +83,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
 
 #pragma mark - Async Get Cached data
 
-- (void)cachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockObjectError)block
+- (void)objectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockObjectError)block
 {
     dispatch_async(propertySafeQueue, ^{
         if(self.cacheType & JMCacheTypeInMemory){
@@ -107,7 +107,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
     });
 }
 
-- (void)cacheObject:(NSObject *)obj forKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block
+- (void)setObject:(NSObject *)obj forKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         
@@ -150,7 +150,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
 }
 
 //Remove cached data
-- (void)removeCachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block
+- (void)removeObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block
 {
     dispatch_async(propertySafeQueue, ^{
         JMCacheKey *cacheKey = [self cacheKeyForKey:key];
@@ -183,7 +183,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
         
         for(NSString *key in [self.allKeys valueForKey:@"key"]){
             dispatch_group_enter(group);
-            [self removeCachedObjectForKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
+            [self removeObjectForKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
                 dispatch_group_leave(group);
             }];
         }
@@ -197,7 +197,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
 
 #pragma mark - Sync Get Cached data
 
-- (id)cachedObjectForKey:(NSString *)key
+- (id)objectForKey:(NSString *)key
 {
     if (!key)
         return nil;
@@ -206,7 +206,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
-    [self cachedObjectForKey:key withCompletionBlock:^(id obj, NSError *error) {
+    [self objectForKey:key withCompletionBlock:^(id obj, NSError *error) {
         objectForKey = obj;
 
         if (self.cachePathType & JMCacheTypeInMemory) {
@@ -222,7 +222,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
     return objectForKey;
 }
 
-- (BOOL)cacheObject:(NSObject *)obj forKey:(NSString *)key
+- (BOOL)setObject:(NSObject *)obj forKey:(NSString *)key
 {
     if (!key)
         return NO;
@@ -230,11 +230,12 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
     __block BOOL bresult = NO;
 
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    [self cacheObject:obj forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
+    __weak JMCache *weakSelf = self;
+    [self setObject:obj forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
+        __strong JMCache *strongSelf = weakSelf;
         bresult = resul;
-        
-        if (self.cachePathType & JMCacheTypeInMemory) {
-            [self.cacheInMemory removeCachedObjectInMemoryForKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
+        if (strongSelf.cachePathType & JMCacheTypeInMemory) {
+            [strongSelf.cacheInMemory removeCachedObjectInMemoryForKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
                 dispatch_semaphore_signal(semaphore);
             }];
         } else {
@@ -246,7 +247,7 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
     return bresult;
 }
 
-- (NSInteger)numberOfObjectInJMCache
+- (NSInteger)numberOfCachedObjects
 {
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     __block NSInteger nb = 0;

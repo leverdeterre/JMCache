@@ -40,24 +40,20 @@ typedef NS_OPTIONS(NSUInteger, JMCacheType) {
 
 + (instancetype)sharedCache;
 
-// https://github.com/nicklockwood/FastCoding
-// zip / crypt data
-//
-
 @property (assign, nonatomic) JMCachePathType cachePathType;
 @property (assign, nonatomic) JMCacheType cacheType;
 @property (strong, nonatomic) JMCacheValueTransformer *valueTransformer;
 @property (nonatomic, strong) dispatch_queue_t preferredCompletionQueue;
 
 // Async API
-- (void)cachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockObjectError)block;
-- (void)cacheObject:(NSObject *)obj forKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
-- (void)removeCachedObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
+- (void)objectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockObjectError)block;
+- (void)setObject:(NSObject *)obj forKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
+- (void)removeObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
 - (void)clearCacheWithCompletionBlock:(JMCacheCompletionBlockBool)block;
 
 // Sync API
-- (id)cachedObjectForKey:(NSString *)key;
-- (BOOL)cacheObject:(NSObject *)obj forKey:(NSString *)key;
-- (NSInteger)numberOfObjectInJMCache;
+- (id)objectForKey:(NSString *)key;
+- (BOOL)setObject:(NSObject *)obj forKey:(NSString *)key;
+- (NSInteger)numberOfCachedObjects;
 
 @end
