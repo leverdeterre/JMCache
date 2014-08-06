@@ -37,20 +37,19 @@ For example, see minimalist implemtation of JMCacheReverseDataValueTransformer c
 @property (strong, nonatomic) JMCacheValueTransformer *valueTransformer;
 ```
 
-### Examples
-Add object
-```objective-c
-NSString *key = [NSString stringWithFormat:@"%f", [date timeIntervalSinceNow]];
-[[JMCache sharedCache] cacheObject:date forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
-    NSLog(@"Job is done");
-}];
-```
+### API
 
-remove object
 ```objective-c
-[[JMCache sharedCache] removeCachedObjectForKey:@"Steve" withCompletionBlock:^(BOOL resul, NSError *error) {
-    NSLog(@"Job is done");
-}];
+// Async API
+- (void)objectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockObjectError)block;
+- (void)setObject:(NSObject *)obj forKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
+- (void)removeObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
+- (void)clearCacheWithCompletionBlock:(JMCacheCompletionBlockBool)block;
+
+// Sync API
+- (id)objectForKey:(NSString *)key;
+- (BOOL)setObject:(NSObject *)obj forKey:(NSString *)key;
+- (NSInteger)numberOfCachedObjects;
 ```
 
 
