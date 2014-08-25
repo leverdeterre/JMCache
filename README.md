@@ -8,6 +8,14 @@ JMCache is cool because :
 * you can configure the cache to be "memory then disk", "only memory", "only disk",
 * you can use a ValueTransformer to increase security of your encoded object, you can zip it, crypt it with your own algorithms.
 
+## Installation & Usage
+
+If using CocoaPods, the quickest way to try it out is to type this on the command line:
+
+```shell
+$ pod try JMCache
+```
+
 
 ## Cache parameters
 ### Cache path type -> auto path to the save directory
