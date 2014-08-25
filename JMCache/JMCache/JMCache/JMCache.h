@@ -19,15 +19,39 @@ void dispatch_optional_queue_async(dispatch_queue_t optionalQueue, dispatch_bloc
 
 #define JM_BLOCK_SAFE_RUN(block, ...) block ? block(__VA_ARGS__) : nil
 
+/**
+ *  JMCachePathType
+ */
 typedef NS_ENUM(NSUInteger, JMCachePathType) {
+    /**
+     *  Save Cache into public path
+     */
     JMCachePathPublic,
+    /**
+     *  Save Cache into private path
+     */
     JMCachePathPrivate,
+    /**
+     *  Save Cache into online path
+     */
     JMCachePathOffline
 };
 
+/**
+ *  JMCacheType
+ */
 typedef NS_OPTIONS(NSUInteger, JMCacheType) {
+    /**
+     *  JMCache just in memory
+     */
     JMCacheTypeInMemory             = 1,
+    /**
+     *  JMCache just on disk
+     */
     JMCacheTypeOnDisk               = 1 << 1,
+    /**
+     *  JMCache just on memory / disk
+     */
     JMCacheTypeInMemoryThenOnDisk   = (JMCacheTypeInMemory | JMCacheTypeOnDisk)
 };
 
@@ -40,20 +64,83 @@ typedef NS_OPTIONS(NSUInteger, JMCacheType) {
 
 + (instancetype)sharedCache;
 
+/**
+ *  Configure your JMCachePath
+ */
 @property (assign, nonatomic) JMCachePathType cachePathType;
+
+/**
+ *  Configure your JMCacheType
+ */
 @property (assign, nonatomic) JMCacheType cacheType;
+
+/**
+ *  Configure a global JMCacheValueTransformer, whitch is going to be use for each encode / decode encoding methods
+ */
 @property (strong, nonatomic) JMCacheValueTransformer *valueTransformer;
+
+/**
+ *  Configure a preferredCompletionQueue
+ */
 @property (nonatomic, strong) dispatch_queue_t preferredCompletionQueue;
 
-// Async API
+/**
+ *  Get oject for key (Async)
+ *
+ *  @param key   NString
+ *  @param block completionBlock
+ */
 - (void)objectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockObjectError)block;
+
+/**
+ *  Set oject for key (Async)
+ *
+ *  @param obj   id object
+ *  @param key   NString
+ *  @param block completionBlock
+ */
 - (void)setObject:(NSObject *)obj forKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
+
+/**
+ *  Remove oject for key (Async)
+ *
+ *  @param key   NString
+ *  @param block completionBlock
+ */
 - (void)removeObjectForKey:(NSString *)key withCompletionBlock:(JMCacheCompletionBlockBoolError)block;
+
+/**
+ *  Remove all objects for key (Async)
+ *
+ *  @param block completionBlock
+ */
 - (void)clearCacheWithCompletionBlock:(JMCacheCompletionBlockBool)block;
 
 // Sync API
+/**
+ *  Get oject for key (Sync)
+ *
+ *  @param key NString
+ *
+ *  @return id stored object
+ */
 - (id)objectForKey:(NSString *)key;
+
+/**
+ *  Set oject for key (Sync)
+ *
+ *  @param obj id stored object
+ *  @param key NString
+ *
+ *  @return Boolean value
+ */
 - (BOOL)setObject:(NSObject *)obj forKey:(NSString *)key;
+
+/**
+ *  Get number of stored ojects (Sync)
+ *
+ *  @return NSInteger
+ */
 - (NSInteger)numberOfCachedObjects;
 
 @end

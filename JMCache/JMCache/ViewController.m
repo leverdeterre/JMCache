@@ -14,6 +14,8 @@
 #import "UIAlertView+JMCache.h"
 
 #include <sys/time.h>
+#import<malloc/malloc.h>
+#import <objc/runtime.h>
 
 long getMillis()
 {
@@ -91,7 +93,10 @@ long getMillis()
     NSDate *date = [NSDate date];
     long timeStart = getMillis();
     NSString *key = [NSString stringWithFormat:@"%f", [date timeIntervalSinceNow]];
-    
+   
+    NSLog(@"Object date Size: %zd", malloc_good_size(class_getInstanceSize(NSDate.class)));
+    NSLog(@"Object string Size: %zd", malloc_good_size(class_getInstanceSize(NSString.class)));
+
     [[JMCache sharedCache] setObject:date forKey:key withCompletionBlock:^(BOOL resul, NSError *error) {
        dispatch_async(dispatch_get_main_queue(), ^{
            long timeEnd = getMillis();

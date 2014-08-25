@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  JMCoding encode / decode protocol
+ */
 @protocol JMCoding <NSObject>
 
 + (id)objectWithData:(NSData *)data;

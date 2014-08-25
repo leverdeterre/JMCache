@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "JMCacheValueTransformer.h"
 
+/**
+ *  An exemple of ValueTransformer that reverse encoding NSData
+ */
 @interface JMCacheReverseDataValueTransformer : JMCacheValueTransformer
 
 @end

@@ -35,7 +35,7 @@
         return YES;
     }
     
-    //support nicklockwood/FastCoding
+    //support nicklockwood/FastCoding for exemple 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     if ([self instancesRespondToSelector:@selector(objectWithData:)]) {
